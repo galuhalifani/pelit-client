@@ -23,13 +23,13 @@ import { monthYearFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserDetails } from "../store/actionsGaluh";
 
-export default function FieldCard({ item, navigation }) {
+export default function FieldCard({ item, navigation, monthYear }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [icon, setIcon] = useState("");
   const dispatch = useDispatch();
   const [dataAsyncUser, setDataAsyncUser] = useState("");
-  const date = new Date();
-  const monthYear = monthYearFormatter(date);
+  // const date = new Date();
+  // const monthYear = monthYearFormatter(date);
   let flagS = false;
 
   async function getItem() {
@@ -42,7 +42,6 @@ export default function FieldCard({ item, navigation }) {
 
   useEffect(() => {
     dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
   }, []);
 
   useEffect(() => {
@@ -117,8 +116,10 @@ export default function FieldCard({ item, navigation }) {
   }, []);
 
   function handleEditItem() {
+    console.log('MASUK HANDLE EDIT')
+    // console.log({ item })
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { item });
+    navigation.navigate("EditExpense", { item, monthYear });
   }
 
   async function handleDeleteItem() {

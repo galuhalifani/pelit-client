@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useEffect } from "react";
 import {
   StyleSheet,
@@ -11,6 +11,7 @@ import {
   Pressable,
   ActivityIndicator,
   ImageBackground,
+  Modal
 } from "react-native";
 import DateCard from "../components/DateCard";
 import { monthYearFormatter } from "../helpers/dateFormatter";
@@ -20,18 +21,21 @@ import CategoryCard from "../components/CatogeryCard";
 import NumberFormat from "react-number-format";
 import { Banner } from "react-native-paper";
 import { Icon } from "react-native-elements";
-import { Avatar, Button, Card, Title, Paragraph } from "react-native-paper";
+import { Avatar, Button, Card, Title, Paragraph, TextInput, Provider} from "react-native-paper";
+import DropDown from "../helpers/react-native-paper-dropdown";
 import {
   fetchLoginUser,
   fetchTransactionByCategory,
   fetchTransactionByDate,
 } from "../store/actionsFaisal";
 import { getUserDetails } from "../store/actionsGaluh";
+import { Picker } from "@react-native-picker/picker";
 
 export default function Home({ navigation }) {
+  const [modalVisible, setModalVisible] = useState(false);
   const [visible, setVisible] = React.useState(true);
   const date = new Date();
-  const monthYear = monthYearFormatter(date);
+  const [monthYear, setMonthYear] = useState(monthYearFormatter(date))
   const [dataUser, setDataUser] = useState("");
   const dataTransByDate = useSelector((state) => state.transByDate);
   const dataTransByCategory = useSelector((state) => state.dataTransByCategory);
@@ -41,6 +45,33 @@ export default function Home({ navigation }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const loadingTransaction = useSelector((state) => state.loadingTransaction);
+  const [monthDropDown, setMonthDropDown] = useState(false);
+  const [typeDropDown, setTypeDropDown] = useState(false);
+  const [type, setType] = useState("Expense");
+  const pickerRef = useRef();
+
+  console.log(monthYear.name, 'month year')
+  console.log(dataTransByDate.length, 'ada data?')
+  
+  const monthChoices = [
+    { label: "January", value: {name: `January 2021`, numMonth: 1}},
+    { label: "February", value: {name: `February 2021`, numMonth: 2} },
+    { label: "March", value: {name: `March 2021`, numMonth: 3} },
+    { label: "April", value: {name: `April 2021`, numMonth: 4} },
+    { label: "May", value: {name: `May 2021`, numMonth: 5} },
+    { label: "June", value: {name: `June 2021`, numMonth: 6} },
+    { label: "July", value: {name: `July 2021`, numMonth: 7}},
+    { label: "August", value: {name: `August 2021`, numMonth: 8} },
+    { label: "September", value: {name: `Sept 2021`, numMonth: 9} },
+    { label: "October", value: {name: `Oct 2021`, numMonth: 10} },
+    { label: "November", value: {name: `Nov 2021`, numMonth: 11}},
+    { label: "December", value: {name: `Dec 2021`, numMonth: 12} }
+  ];
+
+  function changeMonth(value) {
+    setMonthYear(value)
+    setModalVisible(!modalVisible)
+  }
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
@@ -59,7 +90,12 @@ export default function Home({ navigation }) {
     }
   }, [dataUser]);
 
-  console.log(dataTransByDate, "ini trans by date");
+  useEffect(() => {
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+  }, [monthYear]);
+
+  // console.log(dataTransByDate, "ini trans by date");
 
   if (!dataUser || !dataTransByDate) return null;
 
@@ -80,12 +116,9 @@ export default function Home({ navigation }) {
       <ScrollView contentContainerStyle={styles.pageScrollContainer}>
         <ImageBackground
           style={{ flex: 1 }}
-          //We are using online image to set background
           source={{
             uri: "https://wallpaperaccess.com/full/126397.jpg",
           }}
-          //You can also set image from your project folder
-          //require('./images/background_image.jpg')        //
         >
           <View style={styles.pageViewContainer}>
             <View style={styles.pageTitle}>
@@ -94,7 +127,119 @@ export default function Home({ navigation }) {
                   flexDirection: "row",
                 }}
               >
-                <Text style={styles.textTop}>{monthYear.name}</Text>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(!modalVisible)}
+                ><Text style={styles.textTop}>{monthYear.name}</Text>
+                </TouchableOpacity>
+
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Text style={styles.formTitle}>Change Month</Text>
+
+                      <View style={{borderWidth: 1, borderColor: 'darkgrey'}}>
+                      <Picker
+                      style={styles.picker}
+                      dropdownIconColor={"black"}
+                      ref={pickerRef}
+                      mode={"dropdown"}
+                      selectedValue={{name: `${monthYear.name}`, numMonth: `${monthYear.numMonth}`}}
+                      onValueChange={(itemValue) => changeMonth(itemValue)}
+                    >
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="January 2021"
+                        value={{name: `January 2021`, numMonth: 1}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="February 2021"
+                        value={{name: `February 2021`, numMonth: 2}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="March 2021"
+                        value={{name: `March 2021`, numMonth: 3}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="April 2021"
+                        value={{name: `April 2021`, numMonth: 4}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="May 2021"
+                        value={{name: `May 2021`, numMonth: 5}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="June 2021"
+                        value={{name: `June 2021`, numMonth: 6}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="July 2021"
+                        value={{name: `July 2021`, numMonth: 7}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="August 2021"
+                        value={{name: `August 2021`, numMonth: 8}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="September 2021"
+                        value={{name: `Sept 2021`, numMonth: 9}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="October 2021"
+                        value={{name: `Oct 2021`, numMonth: 10}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="November 2021"
+                        value={{name: `Nov 2021`, numMonth: 11}}
+                      />
+                      <Picker.Item
+                        style={{ fontSize: 14 }}
+                        fontFamily={"roboto"}
+                        label="December 2021"
+                        value={{name: `Dec 2021`, numMonth: 12}}
+                      />
+                    </Picker>
+                    </View>
+
+                      <Pressable
+                      style={[styles.buttonModalClose]}
+                      onPress={() => setModalVisible(!modalVisible)}
+                    >
+                      <Text style={styles.textStyle}>Close</Text>
+                    </Pressable>
+
+                    </View>
+                  </View>
+                </Modal>
+
                 <TouchableOpacity
                   style={styles.buttonAdd}
                   onPress={() => navigation.navigate("AddRecord")}
@@ -165,7 +310,7 @@ export default function Home({ navigation }) {
                   thousandSeparator={true}
                   decimalScale={0}
                   renderText={(formattedValue) => (
-                    <Text style={styles.colBodyExpense}>-{formattedValue}</Text>
+                    <Text style={styles.colBodyExpense}>{formattedValue}</Text>
                   )}
                 />
                 <NumberFormat
@@ -218,9 +363,9 @@ export default function Home({ navigation }) {
             {!loadingTransaction ? (
               dataTransByDate.length ? (
                 displayCard === "Date" ? (
-                  <DateCard navigation={navigation}></DateCard>
+                  <DateCard navigation={navigation} monthYear={monthYear}></DateCard>
                 ) : (
-                  <CategoryCard navigation={navigation}></CategoryCard>
+                  <CategoryCard navigation={navigation} monthYear={monthYear}></CategoryCard>
                 )
               ) : (
                 <Text style={styles.textWarning}>
@@ -351,4 +496,56 @@ const styles = StyleSheet.create({
     // color: "white",
     alignItems: "center",
   },
+  centeredView: {
+    flex: 1,
+    marginTop: 120,
+    // justifyContent: "center",
+    alignItems: "center",
+  },
+  modalView: {
+    width: 200,
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 10,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonModalClose: {
+    marginTop: 10,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginRight: 10,
+    elevation: 2,
+    backgroundColor: "green",
+  },
+  picker: {
+    marginTop: 10,
+    fontSize: 10,
+    borderWidth: 3,
+    borderColor: 'black',
+    width: 170,
+    color: "black",
+    marginBottom: 10,
+  },
+  formTitle: {
+    color: "black",
+    fontSize: 16,
+    fontWeight: "bold",
+    padding: 5,
+    borderBottomColor: "lightgrey",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginBottom: 5,
+    textAlign: "center",
+  },
+  textStyle: {
+    color: 'white'
+  }
 });

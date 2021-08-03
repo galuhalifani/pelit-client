@@ -47,7 +47,7 @@ export function getUserDetails(id) {
   // console.log(id, 'ID')
   return function (dispatch) {
     dispatch(toggleLoadingProfile(true));
-    fetch(`https://pelit-app.herokuapp.com/user/${userId}`)
+    fetch(`https://pelit-finance.herokuapp.com/user/${userId}`)
       .then((response) => response.json())
       .then((data) => {
         dispatch(toggleLoadingProfile(false));
@@ -63,7 +63,7 @@ export function getUserDetails(id) {
 
 export function getAllBadges() {
   return function (dispatch) {
-    fetch(`https://pelit-app.herokuapp.com/badge`)
+    fetch(`https://pelit-finance.herokuapp.com/badge`)
       .then((response) => response.json())
       .then((data) => {
         dispatch(setBadges(data));
@@ -77,7 +77,7 @@ export function getAllBadges() {
 export function getUserActiveTarget(id) {
   let userId = +id;
   return function (dispatch) {
-    fetch(`https://pelit-app.herokuapp.com/target/active/${userId}`)
+    fetch(`https://pelit-finance.herokuapp.com/target/active/${userId}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.length > 0) {
@@ -86,7 +86,7 @@ export function getUserActiveTarget(id) {
           let startDate = data[0].startDate;
           let endDate = data[0].endDate;
           fetch(
-            `https://pelit-app.herokuapp.com/transactions/between/${startDate}/${endDate}/${userId}/Expense`
+            `https://pelit-finance.herokuapp.com/transactions/between/${startDate}/${endDate}/${userId}/Expense`
           )
             .then((response) => response.json())
             .then((transactionData) => {
@@ -109,7 +109,7 @@ export function addPushToken(pushToken, userId) {
   console.log(pushToken, userId, "DI ACTIONS");
   let id = +userId;
   return function (dispatch) {
-    fetch(`https://pelit-app.herokuapp.com/user/pushtoken/${id}`, {
+    fetch(`https://pelit-finance.herokuapp.com/user/pushtoken/${id}`, {
       method: "PATCH",
       headers: {
         Accept: "application/json",

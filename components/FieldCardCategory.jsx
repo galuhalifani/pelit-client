@@ -16,15 +16,35 @@ import { monthYearFormatter, monthFormatter } from "../helpers/dateFormatter";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTransactionByDate } from "../store/actionsFaisal";
+import {
+  fetchDeleteTransaction,
+  fetchTransactionByCategory,
+  fetchTransactionByDate,
+} from "../store/actionsFaisal";
 import NumberFormat from "react-number-format";
 import { Avatar } from "react-native-paper";
 import { Icon, Overlay } from "react-native-elements";
+import { getUserDetails } from "../store/actionsGaluh";
 
-export default function FieldCardCategory({ item, data, navigation }) {
+export default function FieldCardCategory({ item, data, navigation, monthYear }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [icon, setIcon] = useState("");
   const dispatch = useDispatch();
+  const [dataAsyncUser, setDataAsyncUser] = useState("");
+  let flagS = false;
+
+  async function getItem() {
+    const dataAsync = await AsyncStorage.getItem("@dataUser");
+    setDataAsyncUser(JSON.parse(dataAsync));
+  }
+
+  useEffect(() => {
+    getItem();
+  }, [flagS, modalVisible]);
+
+  useEffect(() => {
+    dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+  }, []);
 
   useEffect(() => {
     switch (data.category) {
@@ -99,12 +119,18 @@ export default function FieldCardCategory({ item, data, navigation }) {
 
   function handleEditItem() {
     setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { TransactionId: item.id });
+    navigation.navigate("EditExpense", { item, monthYear });
   }
 
-  function handleDeleteItem() {
+  async function handleDeleteItem() {
     setModalVisible(!modalVisible);
-    dispatch(fetchDeleteTransaction(item.id));
+    flagS = true;
+    await dispatch(fetchDeleteTransaction(item.id, monthYear, dataAsyncUser.data));
+    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+    // dispatch(
+    //   fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+    // );
+    // dispatch(getUserDetails(dataAsyncUser.data.id));
   }
 
   return (

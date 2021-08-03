@@ -45,7 +45,7 @@ export default function EditExpense({ navigation, route }) {
   const [categoryDropDown, setCategoryDropDown] = useState(false);
   const [note, setNote] = useState("");
   const newDate = new Date();
-  const monthYear = monthYearFormatter(newDate);
+  // const monthYear = monthYearFormatter(newDate);
   const [dataUser, setDataUser] = useState("");
 
   const [showDropDown, setShowDropDown] = useState(false);
@@ -125,6 +125,7 @@ export default function EditExpense({ navigation, route }) {
   };
 
   async function submitHandler(e) {
+    console.log('EDIT')
     // data diubah jadi form
     // const data = { type, category, title, date, amount, receiptImage }
     // console.log(data)
@@ -143,8 +144,9 @@ export default function EditExpense({ navigation, route }) {
     };
     console.log(payload, route.params.item.id);
     await dispatch(putTransaction({ payload, UserId }));
-    dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
-    dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+    console.log('BERES EDIT')
+    dispatch(fetchTransactionByDate(route.params.monthYear.numMonth, dataUser.data));
+    dispatch(fetchTransactionByCategory(route.params.monthYear.numMonth, dataUser.data));
     dispatch(getUserDetails(dataUser.data.id));
     navigation.navigate("Home");
   }
@@ -276,7 +278,7 @@ export default function EditExpense({ navigation, route }) {
             <View style={{ marginTop: 20, marginBottom: 30 }}>
               <Button
                 onPress={submitHandler}
-                title="Submit Record"
+                title="Edit Record"
                 color="black"
                 style={styles.buttonStyle}
               />

@@ -57,7 +57,7 @@ export function fetchLoginUser(email, password) {
   return async (dispatch) => {
     dispatch(setLoadingTransaction(true));
     try {
-      const response = await fetch("https://pelit-app.herokuapp.com/login", {
+      const response = await fetch("https://pelit-finance.herokuapp.com/login", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -80,7 +80,7 @@ export function fetchLoginUser(email, password) {
       } else if ((result.message = "Wrong Email/Password")) {
         console.log("SALAH PASSWORD");
         dispatch(setLoadingTransaction(false));
-        console.log(result);
+        // console.log(result);
         Alert.alert("Wrong email/password");
         dispatch(setIsLogin(false));
       } else {
@@ -97,7 +97,7 @@ export function fetchRegisterUser(payload) {
   console.log(payload, "ini payload di action");
   return async (dispatch) => {
     try {
-      const response = await fetch("https://pelit-app.herokuapp.com/register", {
+      const response = await fetch("https://pelit-finance.herokuapp.com/register", {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -119,10 +119,10 @@ export function fetchTransactionByDate(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `https://pelit-app.herokuapp.com/transactions/date/${data.id}/${month}`
+          `https://pelit-finance.herokuapp.com/transactions/date/${data.id}/${month}`
         );
         const result = await response.json();
-        console.log("result di action", result);
+        // console.log("result di action", result);
         dispatch(setTransactionByDate(result));
       }
     } catch (err) {
@@ -139,7 +139,7 @@ export function fetchTransactionByCategory(month, data) {
       dispatch(setLoadingTransaction(true));
       if (data) {
         const response = await fetch(
-          `https://pelit-app.herokuapp.com/transactions/category/${
+          `https://pelit-finance.herokuapp.com/transactions/category/${
             data.id
           }/${+month}`
         );
@@ -154,24 +154,46 @@ export function fetchTransactionByCategory(month, data) {
   };
 }
 
-export function fetchDeleteTransaction(id) {
+// export function fetchDeleteTransaction(id) {
+//   console.log(id, "ini transaction id");
+//   return async (dispatch) => {
+//     try {
+//       dispatch(setLoadingTransaction(true));
+//       const response = await fetch(
+//         `https://pelit-finance.herokuapp.com/transactions/${id}`,
+//         {
+//           method: "delete",
+//         }
+//       );
+//       const result = await response.json();
+//       console.log(result, "ini delete");
+//       return result;
+//     } catch (err) {
+//       console.log("error di fetch transaction by date", err);
+//     } finally {
+//       dispatch(setLoadingTransaction(false));
+//     }
+//   };
+// }
+
+export function fetchDeleteTransaction(id, monthYear, userData) {
   console.log(id, "ini transaction id");
-  return async (dispatch) => {
-    try {
+  return function (dispatch) {
       dispatch(setLoadingTransaction(true));
-      const response = await fetch(
-        `https://pelit-app.herokuapp.com/transactions/${id}`,
-        {
+      fetch(`https://pelit-finance.herokuapp.com/transactions/${id}`, {
           method: "delete",
-        }
-      );
-      const result = await response.json();
-      console.log(result, "ini delete");
-      return result;
-    } catch (err) {
-      console.log("error di fetch transaction by date", err);
-    } finally {
-      dispatch(setLoadingTransaction(false));
-    }
+        })
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(fetchTransactionByDate(monthYear.numMonth, userData))
+        dispatch(fetchTransactionByCategory(monthYear.numMonth, userData))
+        dispatch(getUserDetails(userData.id))
+        // dispatch(setLoadingTransaction(false));
+        console.log("success delete", data)
+      })
+      .catch((err) => {
+        dispatch(setLoadingTransaction(false));
+        console.log("error edit item", err);
+      });
   };
 }

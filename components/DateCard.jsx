@@ -18,13 +18,14 @@ import { fetchTransactionByDate } from "../store/actionsFaisal";
 import FieldCard from "./FieldCard";
 import NumberFormat from "react-number-format";
 
-export default function DateCard({ navigation }) {
+export default function DateCard({ navigation, monthYear }) {
   const dispatch = useDispatch();
   const [dataAsyncUser, setDataAsyncUser] = useState("");
-  const date = new Date();
-  const monthYear = monthYearFormatter(date);
+  // const date = new Date();
+  // const monthYear = monthYearFormatter(date);
   let dataTransByDate = useSelector((state) => state.transByDate);
 
+  console.log(monthYear.name, 'month year DATE CARD')
   useEffect(() => {
     async function getItem() {
       const dataAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"));
@@ -76,6 +77,7 @@ export default function DateCard({ navigation }) {
                     key={index}
                     item={item}
                     navigation={navigation}
+                    monthYear={monthYear}
                   ></FieldCard>
                 ))}
               </View>

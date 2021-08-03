@@ -20,12 +20,12 @@ import { fetchTransactionByCategory } from "../store/actionsFaisal";
 import FieldCardCategory from "./FieldCardCategory";
 import NumberFormat from "react-number-format";
 
-export default function CategoryCard({ navigation }) {
+export default function CategoryCard({ navigation, monthYear }) {
   const [modalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
   const [dataAsyncUser, setDataAsyncUser] = useState("");
-  const date = new Date();
-  const monthYear = monthYearFormatter(date);
+  // const date = new Date();
+  // const monthYear = monthYearFormatter(date);
   let dataTransByCategory = useSelector((state) => state.transByCategory);
 
   async function getItem() {
@@ -45,16 +45,6 @@ export default function CategoryCard({ navigation }) {
     }
   }, []);
 
-  function handleEditItem() {
-    setModalVisible(!modalVisible);
-    navigation.navigate("EditExpense", { TransactionId: item.id });
-  }
-
-  function handleDeleteItem() {
-    setModalVisible(!modalVisible);
-    dispatch(fetchDeleteTransaction(item.id));
-  }
-
   if (!dataAsyncUser || !dataTransByCategory.length) return null;
 
   return (
@@ -70,7 +60,7 @@ export default function CategoryCard({ navigation }) {
                 width: 300,
               }}
             >
-              <TouchableOpacity onPress={() => handleEditItem(!modalVisible)}>
+              <TouchableOpacity>
                 <Text style={styles.textDateCard}>{data.category}</Text>
               </TouchableOpacity>
               <NumberFormat
@@ -91,6 +81,7 @@ export default function CategoryCard({ navigation }) {
                 data={data}
                 item={item}
                 navigation={navigation}
+                monthYear={monthYear}
               ></FieldCardCategory>
             ))}
           </View>
