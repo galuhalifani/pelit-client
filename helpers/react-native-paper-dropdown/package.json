@@ -1,0 +1,70 @@
+{
+  "_from": "react-native-paper-dropdown",
+  "_id": "react-native-paper-dropdown@1.0.6",
+  "_inBundle": false,
+  "_integrity": "sha512-7itnh7MT/orT2EhCuExVMfyE4vidcIR+hQPiwV175SjDsbiGBiSxr9YkdNA38rHSOyKMpaU1HYvw1vyCksyGjQ==",
+  "_location": "/react-native-paper-dropdown",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "react-native-paper-dropdown",
+    "name": "react-native-paper-dropdown",
+    "escapedName": "react-native-paper-dropdown",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/react-native-paper-dropdown/-/react-native-paper-dropdown-1.0.6.tgz",
+  "_shasum": "080317e6df41e2024f77c7362111fe1baf4a6467",
+  "_spec": "react-native-paper-dropdown",
+  "_where": "C:\\Users\\Galuh Alifani\\Documents\\Hacktiv8\\Phase 3\\pelit-client",
+  "author": {
+    "name": "Fateh Farooqui"
+  },
+  "bugs": {
+    "url": "https://github.com/fateh999/react-native-paper-dropdown/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Dropdown component using React Native Paper TextInput and Menu",
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/fateh999/react-native-paper-dropdown#readme",
+  "keywords": [
+    "Dropdown",
+    "Material",
+    "Dropdown",
+    "React",
+    "Native",
+    "Paper"
+  ],
+  "license": "MIT",
+  "main": "dist/DropDown.js",
+  "name": "react-native-paper-dropdown",
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-paper": "*",
+    "@types/react": "*",
+    "@types/react-native": "*",
+    "typescript": "*"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fateh999/react-native-paper-dropdown.git"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "types": "dist/DropDown.d.ts",
+  "version": "1.0.6"
+}
