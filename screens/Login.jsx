@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Switch
 } from "react-native";
 import { fetchLoginUser } from "../store/actionsFaisal";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,6 +42,7 @@ export default function Login({ navigation }) {
   const notificationListener = useRef();
   const responseListener = useRef();
   const [user, setUser] = useState(0);
+  const [showPassword, setShowPassword] = useState(false)
 
   // console.log(email, password, 'EMAIL', 'PASSWORD')
 
@@ -159,6 +161,11 @@ export default function Login({ navigation }) {
     navigation.navigate("Register");
   }
 
+  function toggleSwitch() {
+    setShowPassword(!showPassword)
+    // this.setState({ showPassword: !this.state.showPassword });
+  }
+
   return (
     <>
       {loading ? (
@@ -186,9 +193,20 @@ export default function Login({ navigation }) {
               style={styles.textInput}
               onChangeText={(e) => setEmail(e)}
             ></TextInput>
-            <Text style={styles.text}>Password</Text>
+            <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Text style={styles.text}>Password</Text>
+              <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                <Text style={styles.textMini}>Hide/Show</Text>
+                <Switch
+                  trackColor={{ false: "grey", true: "green" }}
+                  onValueChange={toggleSwitch}
+                  value={showPassword}
+                  style={{marginTop: 20}}
+                /> 
+              </View>
+            </View>
             <TextInput
-              secureTextEntry={true}
+              secureTextEntry={!showPassword}
               style={styles.textInput}
               onChangeText={(e) => setPasswordl(e)}
             ></TextInput>
@@ -236,6 +254,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 35,
     marginBottom: 20,
+  },
+  textMini: {
+    fontSize: 9,
+    color: "lightgrey",
+    marginTop: 40,
+    marginBottom: 20,
+    marginRight: 5,
   },
   textInput: {
     fontSize: 15,

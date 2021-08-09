@@ -36,6 +36,7 @@ export default function FieldCard({ item, navigation, monthYear }) {
     const dataAsync = await AsyncStorage.getItem("@dataUser");
     setDataAsyncUser(JSON.parse(dataAsync));
   }
+  
   useEffect(() => {
     getItem();
   }, [flagS, modalVisible]);
@@ -125,12 +126,12 @@ export default function FieldCard({ item, navigation, monthYear }) {
   async function handleDeleteItem() {
     setModalVisible(!modalVisible);
     flagS = true;
-    await dispatch(fetchDeleteTransaction(item.id));
-    dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
-    dispatch(
-      fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
-    );
-    dispatch(getUserDetails(dataAsyncUser.data.id));
+    await dispatch(fetchDeleteTransaction(item.id, monthYear, dataAsyncUser.data));
+    // dispatch(fetchTransactionByDate(monthYear.numMonth, dataAsyncUser.data));
+    // dispatch(
+    //   fetchTransactionByCategory(monthYear.numMonth, dataAsyncUser.data)
+    // );
+    // dispatch(getUserDetails(dataAsyncUser.data.id));
     // dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
     // dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
   }
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
   textListCard: {
     fontSize: 15,
     marginVertical: 5,
-    textAlign: "right",
+    textAlign: "left",
     paddingHorizontal: 10,
   },
   textListCardNumber: {

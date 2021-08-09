@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 // import { StatusBar } from 'expo-status-bar';
 import { Provider } from "react-redux";
 import store from "./store";
@@ -23,7 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationActions } from "react-navigation";
 import { StackActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsLogin, setAllTransactionUser } from "./store/actionsFaisal";
+import { setIsLogin, setAllTransactionUser, setTransactionByDate, setTransactionByCategoty } from "./store/actionsFaisal";
 
 const drawerStyles = {
   drawer: {
@@ -40,6 +40,8 @@ export default function Navigator() {
   const isLogin = useSelector((state) => state.isLogin);
   const Stack = createStackNavigator();
   const [drawer, setDrawer] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [dataUser, setDataUser] = useState("");
   // closeControlPanel = () => {
   //   this._drawer.close()
   // };
@@ -55,17 +57,34 @@ export default function Navigator() {
     await AsyncStorage.removeItem("@dataUser");
     dispatch(setIsLogin(false));
     dispatch(setAllTransactionUser({}));
+    dispatch(setTransactionByDate({}));
+    dispatch(setTransactionByCategoty({}));
     navigation.navigate("Login");
   }
 
   console.log(drawer, "DRAWER");
   //   console.log(isLogin, 'ISLOGIN')
 
+  async function getItem() {
+    const dataUser = await AsyncStorage.getItem("@dataUser");
+    setDataUser(JSON.parse(dataUser));
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    getItem();
+  }, []);
+
   return (
     <>
+    {
+      loading
+      ?
+      null
+      :
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName={dataUser ? "Home": "Login"}
           screenOptions={({ navigation }) => ({
             headerStyle: {
               backgroundColor: "beige",
@@ -261,12 +280,7 @@ export default function Navigator() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-      {/* <Overlay isVisible={drawer} onPress={toggleDrawer}>
-        <View style={{height: 500, width: 300}}>
-        <Button title='Home'/>
-
-        </View>
-         </Overlay> */}
+      }
     </>
   );
 }

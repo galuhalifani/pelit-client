@@ -8,6 +8,8 @@ export default function ModalBadge({allBadges, earnedBadges}) {
       myBadges.push(earnedBadges[i].name)
     }
 
+    console.log(allBadges)
+
     return (
         <View>
         <View style={{flexDirection:'row', justifyContent: 'center'}}>

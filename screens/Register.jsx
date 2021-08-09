@@ -8,6 +8,7 @@ import {
   TextInput,
   Image,
   KeyboardAvoidingView,
+  ActivityIndicator
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRegisterUser } from "../store/actionsFaisal";
@@ -21,6 +22,7 @@ export default function Register({ navigation }) {
   const [balance, setBalance] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const keyboardVerticalOffset = Platform.OS === "android" ? -25 : 0;
+  const loading = useSelector((state) => state.loadingTransaction);
 
   async function imagePickerHandler() {
     // console.log('gottem')
@@ -68,20 +70,33 @@ export default function Register({ navigation }) {
       payload.append("email", email);
       payload.append("balance", balance);
       payload.append("password", password);
-      console.log(payload);
+      console.log(payload, 'FORM DATA REGISTER');
       dispatch(fetchRegisterUser(payload)).then((message) => {
         if (message === "Registered Successfully") {
-          Alert.alert("Registered has been successfully");
+          // console.log(fullName.split)
+          Alert.alert("Success!", `${fullName.split(" ")[0]}, you can now login`);
           navigation.navigate("Login");
         } else {
           Alert.alert(message);
         }
         console.log(message, "ini data");
-      });
+      })
+      .catch((err) => {
+        console.log(err, 'error register')
+      })
     }
   }
 
   return (
+    <>
+    {loading ? (
+        <View style={styles.containerLoading}>
+          <Text style={{ color: "white", marginBottom: 10, fontSize: 16 }}>
+            Adding You to the Books ...
+          </Text>
+          <ActivityIndicator size="large" color="#00ff00" />
+        </View>
+      ) : (
     <View style={styles.container}>
       <KeyboardAvoidingView
         behavior="position"
@@ -191,6 +206,8 @@ export default function Register({ navigation }) {
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>
+    )}
+    </>
   );
 }
 
@@ -239,5 +256,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 18,
+  },
+  containerLoading: {
+    flex: 1,
+    backgroundColor: "midnightblue",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 50,
   },
 });

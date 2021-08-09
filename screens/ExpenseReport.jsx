@@ -55,8 +55,8 @@ export default function ExpenseReport({ navigation, route }) {
     new Date(new Date(endOfMonth).setDate(new Date(endOfMonth).getDate() - 150))
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [pickerStart, setPickerStart] = useState("2");
-  const [pickerEnd, setPickerEnd] = useState("6");
+  const [pickerStart, setPickerStart] = useState(`${dateEnd.getMonth() - 4}`);
+  const [pickerEnd, setPickerEnd] = useState(`${dateEnd.getMonth()}`);
   const [modeStart, setModeStart] = useState("date");
   const [modeEnd, setModeEnd] = useState("date");
   const [showStart, setShowStart] = useState(false);
@@ -86,6 +86,8 @@ export default function ExpenseReport({ navigation, route }) {
     "Dec",
   ];
 
+  console.log('dateEnd', dateEnd)
+
   function open() {
     pickerRef.current.focus();
   }
@@ -106,7 +108,7 @@ export default function ExpenseReport({ navigation, route }) {
   useEffect(() => {
     if (dataUser.access_token) {
       fetch(
-        `https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Expense` //  // 2
+        `https://pelit-finance.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Expense` //  // 2
       )
         .then((response) => response.json())
         .then((data) => {
@@ -154,7 +156,7 @@ export default function ExpenseReport({ navigation, route }) {
 
           setExpenses(monthExp);
           return fetch(
-            `https://pelit-app.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
+            `https://pelit-finance.herokuapp.com/transactions/between/${dateStart}/${dateEnd}/${dataUser.data.id}/Income`
           );
         })
         .then((response) => response.json())

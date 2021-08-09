@@ -17,6 +17,7 @@ import SpendSummary from "../components/spendSummary";
 import EarnedBadges from "../components/EarnedBadges";
 import ModalBadge from "../components/AllBadges";
 import NumberFormat from "react-number-format";
+import { FAB } from 'react-native-paper';
 
 const Separator = () => <View style={styles.separator} />;
 
@@ -30,8 +31,11 @@ export default function MyProfile({
 }) {
   const today = dateFormatter(new Date());
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalHelpVisible, setModalHelpVisible] = useState(false);
+
 
   return (
+    // <View>
     <ScrollView contentContainerStyle={styles.pageScrollContainer}>
       <ImageBackground
         style={{ flex: 1 }}
@@ -127,7 +131,47 @@ export default function MyProfile({
         </Modal>
       </View>
       </ImageBackground>
+      {/* <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalHelpVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalHelpVisible(!modalHelpVisible);
+        }}
+      >
+        <View style={styles.centeredViewHelp}>
+          <View style={styles.modalViewHelp}>
+            <Text style={styles.modalTextHelpBold}>Income & Expense</Text>
+            <Text style={styles.modalTextHelp}>The total income & expense recorded for the current month only</Text>
+            <Text style={styles.modalTextHelpBold}>Balance</Text>
+            <Text style={styles.modalTextHelp}>The total ending balance recorded until today, includes all previous months</Text>
+            <Text style={styles.modalTextHelpBold}>Individual Record Items</Text>
+            <Text style={styles.modalTextHelp}>Only current month's record is shown in homepage. To change the month view, click on the month name on the upper left hand side of the page</Text>
+            <Text style={styles.modalTextHelpBold}>See record details</Text>
+            <Text style={styles.modalTextHelp}>To see record details, click on each of the individual items</Text>
+            <Text style={styles.modalTextHelpBold}>Add a Record</Text>
+            <Text style={styles.modalTextHelp}>Click on the floating + button on the bottom right hand side of the page to add a record</Text>
+            <Text style={styles.modalTextHelpBold}>User Profile & Analytics</Text>
+            <Text style={styles.modalTextHelp}>Navigate to user dashboard by clicking on user profile picture in homepage, or via burger button on the left side header</Text>
+            <Pressable
+              style={[styles.button, styles.buttonModalClose]}
+              onPress={() => setModalHelpVisible(!modalHelpVisible)}
+            >
+              <Text style={styles.textStyle}>Understood</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal> */}
     </ScrollView>
+    /* <FAB
+      style={styles.fabQuestion}
+      small
+      color='white'
+      icon="help"
+      onPress={() => setModalHelpVisible(true)}
+      />
+    </View> */
   );
 }
 
@@ -287,5 +331,53 @@ const styles = StyleSheet.create({
     height: 50,
     resizeMode: "cover",
     marginBottom: 8,
+  },
+  centeredViewHelp: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalViewHelp: {
+    margin: 20,
+    backgroundColor: "black",
+    borderRadius: 20,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalTextHelp: {
+    marginBottom: 15,
+    textAlign: "center",
+    color: 'white'
+  },
+  modalTextHelpBold: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  fabQuestion: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'darkred'
+  },
+  buttonModalClose: {
+    marginTop: 10,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginRight: 10,
+    elevation: 2,
+    backgroundColor: "green",
   },
 });

@@ -86,16 +86,13 @@ export default function EditExpense({ navigation, route }) {
   useEffect(() => {
     // await dispatch(fetchTransaction(2))
     dispatch(fetchTransaction(route.params.item.id));
+    getItem();
   }, []);
 
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
     setDataUser(JSON.parse(dataUser));
   }
-
-  useEffect(() => {
-    getItem();
-  }, []);
 
   useEffect(() => {
     if (transaction.type && dataUser.access_token) {
