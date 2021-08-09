@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter, monthYearFormatter } from "../helpers/dateFormatter";
@@ -48,6 +49,7 @@ export default function AddExpense({ navigation, route }) {
   const [isLoading, setIsLoading] = useState(false);
   const newDate = new Date();
   const monthYear = monthYearFormatter(newDate);
+  const [proceed, setProceed] = useState(false)
 
   const genderList = [
     { label: "Male", value: "male" },
@@ -151,36 +153,66 @@ export default function AddExpense({ navigation, route }) {
     showMode("date");
   };
 
+  console.log(date, 'FULL DATE')
   async function submitHandler() {
-    let dateParse = date.toISOString();
-    // dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
-
-    const payload = new FormData();
-    payload.append("type", type);
-    payload.append("category", category);
-    payload.append("title", title);
-    payload.append("fullDate", dateParse);
-    payload.append("note", note);
-
-    payload.append("amount", amount);
-    const mimeType = "image/jpeg";
-    const fileName = "receiptImage";
-    if (receiptImage) {
-      payload.append("receiptImage", {
-        uri: receiptImage.uri,
-        name: fileName,
-        type: mimeType,
-      });
+    console.log('masuk submit')
+    console.log(new Date(date).getFullYear())
+    console.log(new Date().getFullYear())
+    if (new Date(date).getFullYear() < new Date().getFullYear()) {
+      setProceed(false)
+      Alert.alert(
+        'Are You Sure To Submit?', 
+        `Your transaction is recorded for the year ${date.getFullYear()}. This is way in the past`,
+          [
+            {
+              text: "Revise",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "Proceed", onPress: () => {
+              console.log('proceed')
+              submit() 
+            }
+            }
+          ]
+        )
+    } else {
+      submit()
     }
-    // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
-    // console.log(payload, "ini di submit handler");
-    setIsLoading(true);
+  }
+    
+    async function submit() {
+      console.log('PRCEEED TRUE')
+      let dateParse = date.toISOString();
+      console.log(dateParse, 'DATE')
+      // dateParse = `${dateParse[2]}-${dateParse[1]}-${dateParse[0]}`;
 
-    await dispatch(postTransaction({ payload, UserId }));
-    dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
-    dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
-    dispatch(getUserDetails(dataUser.data.id));
-    navigation.navigate("Home");
+      const payload = new FormData();
+      payload.append("type", type);
+      payload.append("category", category);
+      payload.append("title", title);
+      payload.append("fullDate", dateParse);
+      payload.append("note", note);
+
+      payload.append("amount", amount);
+      const mimeType = "image/jpeg";
+      const fileName = "receiptImage";
+      if (receiptImage) {
+        payload.append("receiptImage", {
+          uri: receiptImage.uri,
+          name: fileName,
+          type: mimeType,
+        });
+      }
+      // console.log(type, category, title, dateParse, note, UserId, receiptImage.uri)
+      // console.log(payload, "ini di submit handler");
+      setIsLoading(true);
+
+      await dispatch(postTransaction({ payload, UserId }));
+      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+      dispatch(getUserDetails(dataUser.data.id));
+      navigation.navigate("Home");      
   }
 
   if (isLoading)

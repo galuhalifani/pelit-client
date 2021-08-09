@@ -1,6 +1,9 @@
 import {} from "./actionTypesGaluh.js";
 import { SET_TRANSACTION } from "./actionTypes.js";
 import { SET_LOADING_FETCH_TRANSACTION } from "./actionTypes.js";
+import {
+  Alert
+} from "react-native";
 
 export function setTransaction(payload) {
   return {
@@ -88,7 +91,10 @@ export function postOcr(payload) {
     try {
       console.log(payload, "SEBELUM POST OCR");
       let res = await (
-        await fetch("https://pelit-finance.herokuapp.com/ocr", {
+        // await fetch("https://pelit-finance.herokuapp.com/ocr", {
+        // await fetch("http://34.203.33.222:3000/ocr", {
+          // await fetch("http://192.168.11.1:3000/ocr", {
+          await fetch("http://3.90.81.18:3000/ocr", {
           method: "POST",
           headers: {
             "Content-Type": "multipart/form-data",
@@ -97,13 +103,22 @@ export function postOcr(payload) {
           body: payload,
         })
       ).json();
-
-      // res = await res.text();
-      // res = await res.json();
-      console.log("Success:", res);
-      return res;
+      
+      if (res.message == 'image is too large') {
+        console.log(res)
+        return res
+      } else if (!res.fullDate && !res.total && !res.title) {
+        Alert.alert('Failed to scan text', 'Please input details manually')
+        console.log("Success:", res);
+        return res;  
+      } else {
+        console.log("Success:", res);
+        return res;  
+      }
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Error:", error);
+      return 'error timed out'
+      // dispatch(setLoadingFeTransaction(false));
     }
   };
 }

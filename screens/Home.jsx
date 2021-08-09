@@ -30,9 +30,11 @@ import {
 } from "../store/actionsFaisal";
 import { getUserDetails } from "../store/actionsGaluh";
 import { Picker } from "@react-native-picker/picker";
+import { FAB } from 'react-native-paper';
 
 export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalHelpVisible, setModalHelpVisible] = useState(false);
   const [visible, setVisible] = React.useState(true);
   const date = new Date();
   const [monthYear, setMonthYear] = useState(monthYearFormatter(date))
@@ -129,8 +131,15 @@ export default function Home({ navigation }) {
               >
                 <TouchableOpacity
                   onPress={() => setModalVisible(!modalVisible)}
-                ><Text style={styles.textTop}>{monthYear.name}</Text>
+                ><Text style={styles.textTop}>{monthYear.name} <Text style={styles.textTopSymbol}>▼</Text></Text>
                 </TouchableOpacity>
+
+                {/* <TouchableOpacity
+                  style={styles.buttonAdd}
+                  onPress={() => navigation.navigate("AddRecord")}
+                >
+                  <Text style={styles.textAdd}>+</Text>
+                </TouchableOpacity> */}
 
                 <Modal
                   animationType="slide"
@@ -240,12 +249,6 @@ export default function Home({ navigation }) {
                   </View>
                 </Modal>
 
-                <TouchableOpacity
-                  style={styles.buttonAdd}
-                  onPress={() => navigation.navigate("AddRecord")}
-                >
-                  <Text style={styles.textAdd}>+</Text>
-                </TouchableOpacity>
               </View>
               <View
                 style={{
@@ -378,6 +381,53 @@ export default function Home({ navigation }) {
           </View>
         </ImageBackground>
       </ScrollView>
+        <FAB
+          style={styles.fab}
+          small
+          color='white'
+          icon="plus"
+          onPress={() => navigation.navigate("AddRecord")}
+        />
+        <FAB
+          style={styles.fabQuestion}
+          small
+          color='white'
+          icon="help"
+          onPress={() => setModalHelpVisible(true)}
+        />
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalHelpVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalHelpVisible(!modalHelpVisible);
+        }}
+      >
+        <View style={styles.centeredViewHelp}>
+          <View style={styles.modalViewHelp}>
+            <Text style={styles.modalTextHelpBold}>Income & Expense</Text>
+            <Text style={styles.modalTextHelp}>The total income & expense recorded for the current month only</Text>
+            <Text style={styles.modalTextHelpBold}>Balance</Text>
+            <Text style={styles.modalTextHelp}>The total ending balance recorded until today, includes all previous months</Text>
+            <Text style={styles.modalTextHelpBold}>Individual Record Items</Text>
+            <Text style={styles.modalTextHelp}>Only current month's record is shown in homepage. To change the month view, click on the month name on the upper left hand side of the page</Text>
+            <Text style={styles.modalTextHelpBold}>See record details</Text>
+            <Text style={styles.modalTextHelp}>To see record details, click on each of the individual items</Text>
+            <Text style={styles.modalTextHelpBold}>Add a Record</Text>
+            <Text style={styles.modalTextHelp}>Click on the floating + button on the bottom right hand side of the page to add a record</Text>
+            <Text style={styles.modalTextHelpBold}>User Profile & Analytics</Text>
+            <Text style={styles.modalTextHelp}>Navigate to user dashboard by clicking on user profile picture in homepage, or via burger button on the left side header</Text>
+            <Pressable
+              style={[styles.button, styles.buttonModalClose]}
+              onPress={() => setModalHelpVisible(!modalHelpVisible)}
+            >
+              <Text style={styles.textStyle}>Understood</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -397,6 +447,38 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 30,
   },
+  centeredViewHelp: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalViewHelp: {
+    margin: 20,
+    backgroundColor: "black",
+    borderRadius: 20,
+    padding: 15,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalTextHelp: {
+    marginBottom: 15,
+    textAlign: "center",
+    color: 'white'
+  },
+  modalTextHelpBold: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: 'bold',
+    color: 'white'
+  },
   userProfilePicture: {
     width: 30,
     height: 30,
@@ -412,12 +494,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  textTopSymbol: {
+    // paddingHorizontal: 2,
+    // paddingVertical: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontSize: 10,
+    fontWeight: "bold",
+    color: "white",
+  },
   colTitle: {
     width: 110,
     marginHorizontal: 7,
     color: "black",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 15,
     textAlign: "center",
     color: "white",
   },
@@ -547,5 +639,19 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     color: 'white'
-  }
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 50,
+    backgroundColor: 'orange'
+  },
+  fabQuestion: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'darkred'
+  },
 });

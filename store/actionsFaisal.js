@@ -96,6 +96,7 @@ export function fetchLoginUser(email, password) {
 export function fetchRegisterUser(payload) {
   console.log(payload, "ini payload di action");
   return async (dispatch) => {
+    dispatch(setLoadingTransaction(true));
     try {
       const response = await fetch("https://pelit-finance.herokuapp.com/register", {
         method: "POST",
@@ -106,8 +107,12 @@ export function fetchRegisterUser(payload) {
         body: payload,
       });
       const result = await response.json();
-      return result.message;
+      if (result.message) {
+        dispatch(setLoadingTransaction(false));
+        return result.message;  
+      }
     } catch (err) {
+      dispatch(setLoadingTransaction(false));
       console.log("error di fetch register", err);
     }
   };

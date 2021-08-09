@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   ActivityIndicator,
+  Alert
 } from "react-native";
 import { Camera } from "expo-camera";
 import CameraPreview from "../components/CameraPreview";
@@ -53,7 +54,13 @@ export default function AddRecord({ navigation, route }) {
     // console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)]
 
     const processedImage = await postToServer(capturedImage);
-    if (processedImage) {
+    if (processedImage.message == 'image is too large') {
+      Alert.alert('Image is too large', 'Max. size is 350kB')
+      setIsLoading(false);
+    } else if (processedImage == 'error timed out') {
+      Alert.alert('Request Timed Out', 'Please use other method or pick smaller file size')
+      setIsLoading(false)
+    } else if (processedImage) {
       console.log("SEBELUM DIKIRIM KE SERVER DARI STATE", capturedImage);
       console.log("siap-siap sebelum navigate", processedImage);
       setIsLoading(false);
@@ -93,7 +100,7 @@ export default function AddRecord({ navigation, route }) {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       // aspect: [4, 3],
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!photo.cancelled) {
@@ -102,7 +109,14 @@ export default function AddRecord({ navigation, route }) {
       setIsLoading(true);
 
       const processedImage = await postToServer(photo);
-      if (processedImage) {
+      console.log(processedImage)
+      if (processedImage.message == 'image is too large') {
+        Alert.alert('Image is too large', 'Max. size is 350kB')
+        setIsLoading(false);
+      } else if (processedImage == 'error timed out') {
+        Alert.alert('Request Timed Out', 'Please use other method or pick smaller file size')
+        setIsLoading(false)
+      } else if (processedImage) {
         // e.preventDefault()
         // console.log("CAPTURED IMAGE", photo);
         console.log("siap-siap sebelum naviagate", processedImage);
@@ -132,19 +146,18 @@ export default function AddRecord({ navigation, route }) {
       });
       console.log(payload, "ini photo post to server");
       // payload.append("dummyText", "dummy");
-      const data = await dispatch(postOcr(payload));
-      console.log("INI DATAAAAAAAA DARI OCR", data);
+      // const data = await dispatch(postOcr(payload));
+      // console.log("INI DATAAAAAAAA DARI OCR", data);
 
       return await dispatch(postOcr(payload));
     } catch (error) {
+      console.log('ERROR CATCH NIH', error)
       console.error(error);
       return;
     }
   }
 
   function toAddExpense() {
-    // e.preventDefault()
-    // console.log('masukkk')
     navigation.navigate("AddExpense");
   }
 
@@ -158,7 +171,13 @@ export default function AddRecord({ navigation, route }) {
 
   if (isLoading)
     return (
-      <View style={[styles.container, styles.horizontal, styles.loading]}>
+      <View style={styles.containerLoading}>
+          <Text style={{ color: "black", marginHorizontal: 10, marginBottom: 10, fontSize: 12 }}>
+            Scanning Image. This might take a while.
+          </Text>
+          <Text style={{ color: "red", marginBottom: 10, textAlign: 'center', marginHorizontal: 10, fontSize: 16, fontWeight: 'bold'}}>
+            Before submitting, please re-check your transaction date.
+          </Text>
         <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
@@ -327,5 +346,12 @@ const styles = StyleSheet.create({
   },
   loading: {
     flex: 1,
+  },
+  containerLoading: {
+    flex: 1,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 50,
   },
 });

@@ -138,7 +138,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
       newTarget.endDate = dateEnd;
       newTarget.monthlyTarget = targetAmount;
 
-      fetch(`http://192.168.100.9:3000/target/all/${userId}`, {
+      fetch(`https://pelit-finance.herokuapp.com/target/all/${userId}`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -160,7 +160,7 @@ export default function SpendSummary({ navigation, route, allSpending, user }) {
 
   function deleteTarget(e) {
     e.preventDefault();
-    fetch(`http://192.168.100.9:3000/target/status/${userId}`, {
+    fetch(`https://pelit-finance.herokuapp.com/target/status/${userId}`, {
       method: "PATCH",
     })
       .then((data) => {
