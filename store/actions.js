@@ -88,13 +88,28 @@ export function putTransaction({ payload }) {
 
 export function postOcr(payload) {
   return async (dispatch) => {
+    async function fetchWithTimeout(resource, options = {}) {
+      const { timeout = 60000 } = options;
+      
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+    
+      const response = await fetch(resource, {
+        ...options,
+        signal: controller.signal  
+      });
+      clearTimeout(id);
+    
+      return response;
+    }
+
     try {
       console.log(payload, "SEBELUM POST OCR");
       let res = await (
         // await fetch("https://pelit-finance.herokuapp.com/ocr", {
-        // await fetch("http://34.203.33.222:3000/ocr", {
-          // await fetch("http://192.168.11.1:3000/ocr", {
-          await fetch("http://3.90.81.18:3000/ocr", {
+        // await fetchWithTimeout("http://192.168.100.19:3000/ocr", {
+          await fetchWithTimeout("http://3.236.239.152:3000/ocr/", {
+          timeout: 60000,
           method: "POST",
           headers: {
             "Content-Type": "multipart/form-data",
@@ -107,9 +122,13 @@ export function postOcr(payload) {
       if (res.message == 'image is too large') {
         console.log(res)
         return res
+      } else if (res == 'TIMEOUT') {
+        Alert.alert('Processing time too long', 'Input manually or select smaller image')
+        console.log("Timeout:", res);
+        return res;  
       } else if (!res.fullDate && !res.total && !res.title) {
         Alert.alert('Failed to scan text', 'Please input details manually')
-        console.log("Success:", res);
+        console.log("Failed to scan text:", res);
         return res;  
       } else {
         console.log("Success:", res);

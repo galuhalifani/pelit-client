@@ -33,6 +33,14 @@ export default function AddRecord({ navigation, route }) {
     }
   }
 
+  async function takePictureHandler() {
+    if (!camera) return;
+    const photo = await camera.takePictureAsync({ quality: 0.1 });
+    console.log(photo, "foto mentah");
+    setPreviewVisible(true);
+    setCapturedImage(photo);
+  }
+
   const savePhotoHandler = async () => {
     const payload = new FormData();
     // payload.append("imageUrl", capturedImage.uri);
@@ -70,18 +78,12 @@ export default function AddRecord({ navigation, route }) {
       });
     }
   };
+
   const retakePictureHandler = () => {
     setCapturedImage(null);
     setPreviewVisible(false);
     startCameraHandler();
   };
-  // function testFetch() {
-  //     console.log('masuk')
-  //     fetch('http://192.168.100.9:3000/transactions/1')
-  //     .then(res => res.json())
-  //     .then(data => console.log(data))
-  //     .catch(err => console.error(err))
-  // }
 
   async function imagePickerHandler() {
     // console.log('gottem')
@@ -159,14 +161,6 @@ export default function AddRecord({ navigation, route }) {
 
   function toAddExpense() {
     navigation.navigate("AddExpense");
-  }
-
-  async function takePictureHandler() {
-    if (!camera) return;
-    const photo = await camera.takePictureAsync({ quality: 0.1 });
-    console.log(photo, "foto mentah");
-    setPreviewVisible(true);
-    setCapturedImage(photo);
   }
 
   if (isLoading)
