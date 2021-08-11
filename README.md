@@ -1,5 +1,7 @@
 # PELIT FINANCE
 
+![Pelit](https://user-images.githubusercontent.com/81514521/129081989-ff6c5688-ed67-48a4-83e4-567e673ae423.jpg)
+
 A mobile app with OCR to track your personal finance on monthly/daily basis. 
 
 - View, add, edit, and delete daily spending / income records
