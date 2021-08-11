@@ -27,10 +27,12 @@ import {
   fetchLoginUser,
   fetchTransactionByCategory,
   fetchTransactionByDate,
+  setIsLogin
 } from "../store/actionsFaisal";
 import { getUserDetails } from "../store/actionsGaluh";
 import { Picker } from "@react-native-picker/picker";
 import { FAB } from 'react-native-paper';
+// import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -46,15 +48,33 @@ export default function Home({ navigation }) {
   const LeftContent = (props) => <Avatar.Icon {...props} icon="folder" />;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const isLogin = useSelector((state) => state.isLogin);
   const loadingTransaction = useSelector((state) => state.loadingTransaction);
   const [monthDropDown, setMonthDropDown] = useState(false);
   const [typeDropDown, setTypeDropDown] = useState(false);
   const [type, setType] = useState("Expense");
   const pickerRef = useRef();
 
-  console.log(monthYear.name, 'month year')
-  console.log(dataTransByDate.length, 'ada data?')
-  
+  // Reactotron.log(dataTransByDate.length, 'data trans home?')
+  // if (dataUser) {
+  //   // Reactotron.log(AsyncStorage.getItem("@dataUser"), 'ASYNC STORAGE HOME ATAS')
+  //   Reactotron.log(dataUser.data.firstName, "ini dataUser di Home");
+  // } else {
+  //   Reactotron.log(dataUser, 'ini data user home')
+  // }
+  // console.log(monthYear.name, 'month year')
+  // console.log(dataTransByDate.length, 'data trans home?')
+  // if(dataUser) {
+  //   if (dataUser.data) {
+  //     console.log('ADAAAAAAA')
+  //     console.log(dataUser.data.firstName, "ini dataUser di Home");
+  //   } else {
+  //     console.log(dataUser, 'ini data user home')
+  //   }  
+  // } else {
+  //   console.log('DATA USER GA ADA')
+  // }
+
   const monthChoices = [
     { label: "January", value: {name: `January 2021`, numMonth: 1}},
     { label: "February", value: {name: `February 2021`, numMonth: 2} },
@@ -76,30 +96,35 @@ export default function Home({ navigation }) {
   }
 
   async function getItem() {
-    const dataUser = await AsyncStorage.getItem("@dataUser");
-    setDataUser(JSON.parse(dataUser));
+    const dataUserAsync = await AsyncStorage.getItem("@dataUser");
+    let result = JSON.parse(dataUserAsync)
+    if (result.access_token) {
+      // console.log(result, 'RESULT')
+      setIsLogin(true)
+    }
+    // Reactotron.log(dataUserAsync, 'ASYNC STORAGE HOME')
+    setDataUser(JSON.parse(dataUserAsync));
   }
 
   useEffect(() => {
     getItem();
+  }, [isLogin]);
+
+  useEffect(() => {
+    if(dataUser) {
+      setIsLogin(true)
+    }
   }, []);
 
   useEffect(() => {
-    if (dataUser.access_token) {
-      dispatch(getUserDetails(dataUser.data.id));
-      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
-      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+    if (dataUser) {
+      if (dataUser.access_token) {
+        dispatch(getUserDetails(dataUser.data.id));
+        dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
+        dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
+      }
     }
-  }, [dataUser]);
-
-  useEffect(() => {
-      dispatch(fetchTransactionByDate(monthYear.numMonth, dataUser.data));
-      dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
-  }, [monthYear]);
-
-  // console.log(dataTransByDate, "ini trans by date");
-
-  if (!dataUser || !dataTransByDate) return null;
+  }, [dataUser, monthYear]);
 
   let totalncome = 0;
   let totalExpense = 0;
@@ -112,6 +137,8 @@ export default function Home({ navigation }) {
       }
     }
   }
+
+  if (!dataUser || !dataTransByDate) return null;
 
   return (
     <View style={styles.container}>
@@ -133,13 +160,6 @@ export default function Home({ navigation }) {
                   onPress={() => setModalVisible(!modalVisible)}
                 ><Text style={styles.textTop}>{monthYear.name} <Text style={styles.textTopSymbol}>▼</Text></Text>
                 </TouchableOpacity>
-
-                {/* <TouchableOpacity
-                  style={styles.buttonAdd}
-                  onPress={() => navigation.navigate("AddRecord")}
-                >
-                  <Text style={styles.textAdd}>+</Text>
-                </TouchableOpacity> */}
 
                 <Modal
                   animationType="slide"
@@ -364,19 +384,26 @@ export default function Home({ navigation }) {
               </TouchableOpacity>
             </View>
             {!loadingTransaction ? (
-              dataTransByDate.length ? (
+              dataTransByDate.length > 0 ? (
                 displayCard === "Date" ? (
                   <DateCard navigation={navigation} monthYear={monthYear}></DateCard>
                 ) : (
                   <CategoryCard navigation={navigation} monthYear={monthYear}></CategoryCard>
                 )
+              ) :
+                dataTransByDate == {} ? (
+                <Text style={styles.textWarning}>
+                  Sorry, there is an error fetching your wallet
+                </Text>
               ) : (
                 <Text style={styles.textWarning}>
                   You Have No Recorded Transactions
                 </Text>
-              )
+                )
             ) : (
+              <View style={{marginTop: 30}}>
               <ActivityIndicator size="large" color="#00ff00" />
+              </View>
             )}
           </View>
         </ImageBackground>
@@ -495,8 +522,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
   textTopSymbol: {
-    // paddingHorizontal: 2,
-    // paddingVertical: 5,
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
@@ -578,20 +603,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 12,
-    // backgroundColor: "#A2DBFA",
   },
   pageTitle: {
     flexDirection: "row",
     marginBottom: 15,
     marginTop: 3,
     justifyContent: "space-between",
-    // color: "white",
     alignItems: "center",
   },
   centeredView: {
     flex: 1,
     marginTop: 120,
-    // justifyContent: "center",
     alignItems: "center",
   },
   modalView: {

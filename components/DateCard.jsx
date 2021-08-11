@@ -25,7 +25,7 @@ export default function DateCard({ navigation, monthYear }) {
   // const monthYear = monthYearFormatter(date);
   let dataTransByDate = useSelector((state) => state.transByDate);
 
-  console.log(monthYear.name, monthYear.numMonth, 'month year DATE CARD')
+  // console.log(monthYear.name, monthYear.numMonth, 'month year DATE CARD')
   useEffect(() => {
     async function getItem() {
       const dataAsync = JSON.parse(await AsyncStorage.getItem("@dataUser"));

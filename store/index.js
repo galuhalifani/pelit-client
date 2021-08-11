@@ -1,9 +1,10 @@
+// import Reactotron from '../ReactotronConfig'
 import { createStore, applyMiddleware, compose } from 'redux'
 // import { SET_USER, SET_BADGES, SET_ACTIVE_TARGET, TOGGLE_LOADER_PROFILE } from './actionTypesGaluh.js'
 // import { } from './actionTypes.js'
 import reducer from './reducers'
 import thunk from 'redux-thunk'
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 // const initialState = {
 //     user: {},
@@ -27,10 +28,11 @@ import thunk from 'redux-thunk'
 // }
 
 const store = createStore (
-    reducer, applyMiddleware(thunk)
-    // composeEnhancers(
-    //     applyMiddleware(thunk)
-    // )
+    reducer, 
+    composeEnhancers(
+        applyMiddleware(thunk)
+        // Reactotron.createEnhancer()
+    )
 )
 
 export default store

@@ -24,6 +24,10 @@ import { NavigationActions } from "react-navigation";
 import { StackActions } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsLogin, setAllTransactionUser, setTransactionByDate, setTransactionByCategoty } from "./store/actionsFaisal";
+import { setUser } from "./store/actionsGaluh";
+// import Reactotron, { asyncStorage } from 'reactotron-react-native'
+import {LogBox } from 'react-native';
+import LoadingScreen from "./screens/LoadingScreen";
 
 const drawerStyles = {
   drawer: {
@@ -36,18 +40,17 @@ const drawerStyles = {
 };
 
 export default function Navigator() {
+  LogBox.ignoreLogs(['Reanimated 2']);
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.isLogin);
+  const user = useSelector((state) => state.user);
+  const allTransaction = useSelector((state) => state.allTransaction);
+  const transByDate = useSelector((state) => state.transByDate);
+  const transByCategory = useSelector((state) => state.transByCategory);
   const Stack = createStackNavigator();
   const [drawer, setDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dataUser, setDataUser] = useState("");
-  // closeControlPanel = () => {
-  //   this._drawer.close()
-  // };
-  // openControlPanel = () => {
-  //   this._drawer.open()
-  // };
 
   function toggleDrawer(navigation) {
     navigation.navigate("Navigation");
@@ -55,18 +58,28 @@ export default function Navigator() {
 
   async function logout(navigation) {
     await AsyncStorage.removeItem("@dataUser");
-    dispatch(setIsLogin(false));
-    dispatch(setAllTransactionUser({}));
-    dispatch(setTransactionByDate({}));
-    dispatch(setTransactionByCategoty({}));
+    const dataUserAsync = await AsyncStorage.getItem("@dataUser");
+    console.log(dataUserAsync, 'DATA USER ASYNC NIH')
+    // Reactotron.log(dataUserAsync, 'ASYNC STORAGE NAVIGATOR LOGOUT')
+    await dispatch(setIsLogin(false));
+    // Reactotron.log(isLogin, 'ISLOGIN LOGOUT')
+    await dispatch(setAllTransactionUser({}));
+    // Reactotron.log(allTransaction, 'ALLTRANS LOGOUT')
+    await dispatch(setTransactionByDate({}));
+    // Reactotron.log(transByDate, 'TRANSBYDATE LOGOUT')
+    await dispatch(setTransactionByCategoty({}));
+    // Reactotron.log(transByCategory, 'TRANSBYCAT LOGOUT')
+    await dispatch(setUser({}));
+    // Reactotron.log(user, 'USER LOGOUT')
     navigation.navigate("Login");
   }
 
-  console.log(drawer, "DRAWER");
-  //   console.log(isLogin, 'ISLOGIN')
-
   async function getItem() {
     const dataUser = await AsyncStorage.getItem("@dataUser");
+    if(dataUser) {
+      // console.log('data User OK di Navigator, set login true')
+      setIsLogin(true)
+    }
     setDataUser(JSON.parse(dataUser));
     setLoading(false)
   }
@@ -85,9 +98,10 @@ export default function Navigator() {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName={dataUser ? "Home": "Login"}
+          // initialRouteName="Loading"
           screenOptions={({ navigation }) => ({
             headerStyle: {
-              backgroundColor: "beige",
+              backgroundColor: "white",
             },
             headerTitleAlign: "center",
             headerTitleStyle: {
@@ -96,6 +110,7 @@ export default function Navigator() {
           })}
         >
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Loading" component={LoadingScreen} />
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen
             name="Home"

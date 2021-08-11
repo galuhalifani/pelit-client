@@ -5,7 +5,9 @@ import {
   SET_LOADING_TRANSACTION,
   SET_IS_LOGIN,
   SET_ERROR_LOGIN,
+  SET_ERROR
 } from "./actionTypesFaisal";
+import { getUserDetails } from "./actionsGaluh";
 import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -19,6 +21,13 @@ export function setIsLogin(input) {
 export function setErrorLogin(input) {
   return {
     type: SET_ERROR_LOGIN,
+    payload: input,
+  };
+}
+
+export function setError(input) {
+  return {
+    type: SET_ERROR,
     payload: input,
   };
 }
@@ -69,8 +78,6 @@ export function fetchLoginUser(email, password) {
         }),
       });
       result = await response.json();
-      // console.log(typeof result, 'TYPENYA RESULTTTTTTTTTTTTTTTTTTTT')
-      // console.log(result, result)
       if (result.access_token) {
         // await AsyncStorage.removeItem("@dataUser")
         await AsyncStorage.setItem("@dataUser", JSON.stringify(result));
@@ -132,6 +139,7 @@ export function fetchTransactionByDate(month, data) {
       }
     } catch (err) {
       console.log("error di fetch transaction by date", err);
+      Alert.alert("Sorry, there is an error", "Please refresh the page");
     } finally {
       dispatch(setLoadingTransaction(false));
     }
@@ -159,28 +167,6 @@ export function fetchTransactionByCategory(month, data) {
   };
 }
 
-// export function fetchDeleteTransaction(id) {
-//   console.log(id, "ini transaction id");
-//   return async (dispatch) => {
-//     try {
-//       dispatch(setLoadingTransaction(true));
-//       const response = await fetch(
-//         `https://pelit-finance.herokuapp.com/transactions/${id}`,
-//         {
-//           method: "delete",
-//         }
-//       );
-//       const result = await response.json();
-//       console.log(result, "ini delete");
-//       return result;
-//     } catch (err) {
-//       console.log("error di fetch transaction by date", err);
-//     } finally {
-//       dispatch(setLoadingTransaction(false));
-//     }
-//   };
-// }
-
 export function fetchDeleteTransaction(id, monthYear, userData) {
   console.log(id, "ini transaction id");
   return function (dispatch) {
@@ -193,12 +179,11 @@ export function fetchDeleteTransaction(id, monthYear, userData) {
         dispatch(fetchTransactionByDate(monthYear.numMonth, userData))
         dispatch(fetchTransactionByCategory(monthYear.numMonth, userData))
         dispatch(getUserDetails(userData.id))
-        // dispatch(setLoadingTransaction(false));
         console.log("success delete", data)
       })
       .catch((err) => {
         dispatch(setLoadingTransaction(false));
-        console.log("error edit item", err);
+        console.log("error delete item", err);
       });
   };
 }

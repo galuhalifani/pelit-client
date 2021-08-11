@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Alert
 } from "react-native";
+import LoadingScreen from "./LoadingScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { dateFormatter, monthYearFormatter } from "../helpers/dateFormatter";
 import * as ImagePicker from "expo-image-picker";
@@ -50,14 +51,6 @@ export default function AddExpense({ navigation, route }) {
   const newDate = new Date();
   const monthYear = monthYearFormatter(newDate);
   const [proceed, setProceed] = useState(false)
-
-  const genderList = [
-    { label: "Male", value: "male" },
-
-    { label: "Female", value: "female" },
-
-    { label: "Others", value: "others" },
-  ];
 
   const expenseChoices = [
     { label: "Housing", value: "Housing" },
@@ -112,6 +105,10 @@ export default function AddExpense({ navigation, route }) {
     // console.log(route.params)
   }, []);
 
+  const image = route.params.image;
+  // console.log(image, 'PHOTO ADD EXPENSE');
+  // console.log(receiptImage, 'RECEIPT IMAGE')
+
   async function uploadImageHandler() {
     if (Platform.OS !== "web") {
       const { status } =
@@ -129,7 +126,7 @@ export default function AddExpense({ navigation, route }) {
       quality: 1,
     });
 
-    console.log(photo);
+    console.log(photo, 'PHOTO ADD EXPENSE');
 
     if (!photo.cancelled) {
       setReceiptImage(photo);
@@ -217,9 +214,7 @@ export default function AddExpense({ navigation, route }) {
 
   if (isLoading)
     return (
-      <View style={[styles.container, styles.horizontal, styles.loading]}>
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
+      <LoadingScreen message={"AddExpense"}/>
     );
 
   return (
@@ -244,7 +239,7 @@ export default function AddExpense({ navigation, route }) {
             <Button
               onPress={showDatepicker}
               color={"blue"}
-              title="Pick a date"
+              title="Change date"
             />
             {show && (
               <DateTimePicker
@@ -337,7 +332,7 @@ export default function AddExpense({ navigation, route }) {
                 <Button
                   onPress={() => setReceiptImage("")}
                   title="Clear Image"
-                  color={"blue"}
+                  color={"sienna"}
                   style={styles.buttonStyle}
                 />
               </>
@@ -361,7 +356,9 @@ export default function AddExpense({ navigation, route }) {
               />
             </View>
           ) : (
-            <View style={{ marginTop: 20, marginBottom: 30 }} />
+            <View style={{ marginTop: 20, marginBottom: 30 }}>
+            <Text style={{textAlign: 'center', color: 'red'}}>Please complete the required fields (*) to submit</Text>
+            </View>
           )}
         </ScrollView>
       </Provider>
@@ -421,10 +418,17 @@ const styles = StyleSheet.create({
     color: "black",
   },
   image: {
-    // width: 200,
-    // height: 200,
+    height: 200,
+    resizeMode: 'contain',
     flex: 1,
     marginHorizontal: 4,
     marginVertical: 4,
+  },
+  containerLoading: {
+    flex: 1,
+    backgroundColor: "#04009A",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 50,
   },
 });

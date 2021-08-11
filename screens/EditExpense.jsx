@@ -84,9 +84,11 @@ export default function EditExpense({ navigation, route }) {
   const incomeItems = incomeChoices.map((ele) => ({ label: ele, value: ele }));
 
   useEffect(() => {
+    let isMounted = true;
     // await dispatch(fetchTransaction(2))
     dispatch(fetchTransaction(route.params.item.id));
     getItem();
+    return () => { isMounted = false };
   }, []);
 
   async function getItem() {
@@ -95,6 +97,7 @@ export default function EditExpense({ navigation, route }) {
   }
 
   useEffect(() => {
+    let isMounted = true;
     if (transaction.type && dataUser.access_token) {
       setType(transaction.type);
       setCategory(transaction.category);
@@ -104,6 +107,7 @@ export default function EditExpense({ navigation, route }) {
       setUserId(transaction.UserId);
       setReceiptImage(transaction.receiptImage);
     }
+    return () => { isMounted = false };
   }, [transaction]);
 
   const dateHandler = (event, selectedDate) => {
