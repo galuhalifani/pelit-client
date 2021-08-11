@@ -98,25 +98,31 @@ export default function Home({ navigation }) {
   async function getItem() {
     const dataUserAsync = await AsyncStorage.getItem("@dataUser");
     let result = JSON.parse(dataUserAsync)
-    if (result.access_token) {
-      // console.log(result, 'RESULT')
-      setIsLogin(true)
+    if (result) {
+      if (result.access_token) {
+        setIsLogin(true)
+      }  
     }
     // Reactotron.log(dataUserAsync, 'ASYNC STORAGE HOME')
     setDataUser(JSON.parse(dataUserAsync));
   }
 
   useEffect(() => {
+    let isMounted = true;
     getItem();
+    return () => { isMounted = false };
   }, [isLogin]);
 
   useEffect(() => {
+    let isMounted = true;
     if(dataUser) {
       setIsLogin(true)
     }
+    return () => { isMounted = false };
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
     if (dataUser) {
       if (dataUser.access_token) {
         dispatch(getUserDetails(dataUser.data.id));
@@ -124,6 +130,7 @@ export default function Home({ navigation }) {
         dispatch(fetchTransactionByCategory(monthYear.numMonth, dataUser.data));
       }
     }
+    return () => { isMounted = false };
   }, [dataUser, monthYear]);
 
   let totalncome = 0;
