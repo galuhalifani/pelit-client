@@ -2,29 +2,12 @@ import React, { useState } from "react";
 // import { StatusBar } from 'expo-status-bar';
 import { Provider } from "react-redux";
 import store from "./store";
-import Login from "./screens/Login.jsx";
-import Register from "./screens/Register.jsx";
-import Home from "./screens/Home.jsx";
-import AddExpense from "./screens/AddExpense.jsx";
-import EditExpense from "./screens/EditExpense";
-import Dashboard from "./screens/Dashboard.jsx";
-import MyProfile from "./screens/MyProfile.jsx";
-import SideMenu from "./components/SideMenu.jsx";
-import ExpenseReport from "./screens/ExpenseReport.jsx";
 import Navigator from "./Navigator.js";
-import { StyleSheet, Text, View, Button, Image, Pressable } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import AddRecord from "./screens/AddRecord";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import Drawer from "react-native-drawer";
-import { Icon, Overlay } from "react-native-elements";
-import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NavigationActions } from "react-navigation";
-import { StackActions } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
-import { setIsLogin, setAllTransactionUser } from "./store/actionsFaisal";
 // import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 const drawerStyles = {
