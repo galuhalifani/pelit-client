@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert
 } from "react-native";
+import LoadingScreen from "./LoadingScreen";
 import { Camera } from "expo-camera";
 import CameraPreview from "../components/CameraPreview";
 import { useDispatch } from "react-redux";
@@ -36,17 +37,16 @@ export default function AddRecord({ navigation, route }) {
   async function takePictureHandler() {
     if (!camera) return;
     const photo = await camera.takePictureAsync({ quality: 0.1 });
-    console.log(photo, "foto mentah");
+    // console.log(photo, "foto mentah");
     setPreviewVisible(true);
     setCapturedImage(photo);
   }
 
   const savePhotoHandler = async () => {
     const payload = new FormData();
-    // payload.append("imageUrl", capturedImage.uri);
     const fileName = "receiptImage";
     const mimeType = "image/jpeg";
-    console.log(capturedImage, "capture image di save photo handler");
+    // console.log(capturedImage, "capture image di save photo handler");
 
     payload.append("receiptImage", {
       uri: capturedImage.uri,
@@ -59,8 +59,6 @@ export default function AddRecord({ navigation, route }) {
     // const result = await dispatch(postOcr(payload))
     setIsLoading(true);
 
-    // console.log('SEBELUM DIKIRIM KE SERVER DARI STATE',capturedImage)]
-
     const processedImage = await postToServer(capturedImage);
     if (processedImage.message == 'image is too large') {
       Alert.alert('Image is too large', 'Max. size is 350kB')
@@ -69,8 +67,7 @@ export default function AddRecord({ navigation, route }) {
       Alert.alert('Request Timed Out', 'Please use other method or pick smaller file size')
       setIsLoading(false)
     } else if (processedImage) {
-      console.log("SEBELUM DIKIRIM KE SERVER DARI STATE", capturedImage);
-      console.log("siap-siap sebelum navigate", processedImage);
+      // console.log("siap-siap sebelum navigate", processedImage);
       setIsLoading(false);
       navigation.navigate("AddExpense", {
         data: processedImage,
@@ -106,12 +103,12 @@ export default function AddRecord({ navigation, route }) {
     });
 
     if (!photo.cancelled) {
-      console.log("imagePicker photo", photo);
+      // console.log("imagePicker photo", photo);
       setCapturedImage(photo);
       setIsLoading(true);
 
       const processedImage = await postToServer(photo);
-      console.log(processedImage)
+      // console.log(processedImage)
       if (processedImage.message == 'image is too large') {
         Alert.alert('Image is too large', 'Max. size is 350kB')
         setIsLoading(false);
@@ -121,7 +118,8 @@ export default function AddRecord({ navigation, route }) {
       } else if (processedImage) {
         // e.preventDefault()
         // console.log("CAPTURED IMAGE", photo);
-        console.log("siap-siap sebelum naviagate", processedImage);
+        // console.log("siap-siap sebelum naviagate", processedImage);
+        // console.log(photo, 'PHOTO ADD RECORD')
         setIsLoading(false);
         navigation.navigate("AddExpense", {
           data: processedImage,
@@ -146,11 +144,8 @@ export default function AddRecord({ navigation, route }) {
         name: fileName,
         type: mimeType,
       });
-      console.log(payload, "ini photo post to server");
-      // payload.append("dummyText", "dummy");
+      // console.log(payload, "ini photo post to server");
       // const data = await dispatch(postOcr(payload));
-      // console.log("INI DATAAAAAAAA DARI OCR", data);
-
       return await dispatch(postOcr(payload));
     } catch (error) {
       console.log('ERROR CATCH NIH', error)
@@ -165,15 +160,7 @@ export default function AddRecord({ navigation, route }) {
 
   if (isLoading)
     return (
-      <View style={styles.containerLoading}>
-          <Text style={{ color: "black", marginHorizontal: 10, marginBottom: 10, fontSize: 12 }}>
-            Scanning Image. This might take a while.
-          </Text>
-          <Text style={{ color: "red", marginBottom: 10, textAlign: 'center', marginHorizontal: 10, fontSize: 16, fontWeight: 'bold'}}>
-            Before submitting, please re-check your transaction date.
-          </Text>
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
+      <LoadingScreen message={"AddRecord"}/>
     );
 
   return (

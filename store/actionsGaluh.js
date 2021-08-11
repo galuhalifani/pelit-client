@@ -82,7 +82,6 @@ export function getUserActiveTarget(id) {
       .then((data) => {
         if (data.length > 0) {
           dispatch(setActiveTarget(data[0]));
-          console.log("MASUKKK");
           let startDate = data[0].startDate;
           let endDate = data[0].endDate;
           fetch(

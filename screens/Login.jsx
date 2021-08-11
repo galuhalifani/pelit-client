@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import {
   StyleSheet,
+  ScrollView,
   Text,
   View,
   Alert,
@@ -20,6 +21,9 @@ import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addPushToken } from "../store/actionsGaluh";
 import { setErrorLogin } from "../store/actionsFaisal";
+import LottieView from 'lottie-react-native';
+import LoadingScreen from "./LoadingScreen";
+// import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -36,6 +40,9 @@ export default function Login({ navigation }) {
   const isLogin = useSelector((state) => state.isLogin);
   const loading = useSelector((state) => state.loadingTransaction);
   const errorLogin = useSelector((state) => state.errorLogin);
+  const allTransaction = useSelector((state) => state.allTransaction);
+  const transByDate = useSelector((state) => state.transByDate);
+  const transByCategory = useSelector((state) => state.transByCategory);
   const keyboardVerticalOffset = Platform.OS === "android" ? 100 : 0;
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState(false);
@@ -44,19 +51,35 @@ export default function Login({ navigation }) {
   const [user, setUser] = useState(0);
   const [showPassword, setShowPassword] = useState(false)
 
-  // console.log(email, password, 'EMAIL', 'PASSWORD')
+  // Reactotron.log(isLogin, 'ISLOGIN')
+  // Reactotron.log(allTransaction, 'ALLTRANS LOGIN')
+  // Reactotron.log(transByDate, 'TRANSBYDATE LOGIN')
+  // Reactotron.log(transByCategory, 'TRANSBYCAT LOGIN')
+  // Reactotron.log(user, 'USER DI LOGIN')
+  // Reactotron.log(AsyncStorage.getItem("@dataUser"), 'ASYNC STORAGE LOGIN')
+
+  // console.log(isLogin, 'ISLOGIN')
+  // if (allTransaction) {
+  //   console.log(allTransaction.access_token, 'ALLTRANS LOGIN')
+  // } else {
+  //   console.log(allTransaction, 'ALLTRANS LOGIN')
+  // }
+  // console.log(transByDate.length, 'TRANSBYDATE LOGIN')
+  // console.log(transByCategory.length, 'TRANSBYCAT LOGIN')
+  // if (user) {
+  //   console.log(user.data.firstName, 'USER DI LOGIN ADA')
+  // } else {
+  //   console.log(user, 'USER DI LOGIN GA ADA')
+  // }
 
   useEffect(() => {
-    if (user.data) {
-      //  console.log(user.data.id)
+    if (user && user.data) {
+      // Reactotron.log(user.data, 'ini USER.DATA di Login')
       sendPushNotification(expoPushToken);
       dispatch(addPushToken(expoPushToken, user.data.id));
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   dispatch(fetchLoginUser(email, password));
-  // }, [email, password, dispatch]);
 
   useEffect(() => {
     registerForPushNotificationsAsync().then((token) =>
@@ -84,9 +107,17 @@ export default function Login({ navigation }) {
   }, []);
 
   async function getUserId() {
-    let userSync = await AsyncStorage.getItem("@dataUser");
+    const userSync = await AsyncStorage.getItem("@dataUser");
+    // Reactotron.log(userSync, 'ini data asyncStorage di LOGIN')
+    if (userSync) {
+      console.log(userSync.access_token, 'ini data asyncStorage di LOGIN')
+    }
     setUser(JSON.parse(userSync));
   }
+
+  useEffect(() => {
+      getUserId();
+  }, []);
 
   async function sendPushNotification(expoPushToken) {
     const message = {
@@ -138,22 +169,27 @@ export default function Login({ navigation }) {
 
     return token;
   }
-
-  // console.log(isLogin, 'ISLOGIN')
+  
   async function handleLoginButton() {
     if (!email && !password)
       Alert.alert("Please input your email and password");
     else if (!email) Alert.alert("Please input your email");
     else if (!password) Alert.alert("Please input your password");
     else {
-      dispatch(fetchLoginUser(email, password));
+      await dispatch(fetchLoginUser(email, password));
+      if (isLogin) {
+        console.log('NAVIGATE KE HOME DI HANDLE LOGIN')
+        getUserId();
+        navigation.navigate("Home")
+      }
     }
   }
 
   useEffect(() => {
     if (isLogin) {
+      console.log('NAVIGATE KE HOME')
       getUserId();
-      navigation.navigate("Home");
+      navigation.navigate("Home")
     }
   }, [isLogin, errorLogin]);
 
@@ -163,20 +199,14 @@ export default function Login({ navigation }) {
 
   function toggleSwitch() {
     setShowPassword(!showPassword)
-    // this.setState({ showPassword: !this.state.showPassword });
   }
 
   return (
     <>
       {loading ? (
-        <View style={styles.containerLoading}>
-          <Text style={{ color: "white", marginBottom: 10, fontSize: 16 }}>
-            Arranging Stuff ...
-          </Text>
-          <ActivityIndicator size="large" color="#00ff00" />
-        </View>
+          <LoadingScreen message={"Login"}/>
       ) : (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
           <KeyboardAvoidingView
             behavior="position"
             keyboardVerticalOffset={keyboardVerticalOffset}
@@ -193,6 +223,7 @@ export default function Login({ navigation }) {
               style={styles.textInput}
               onChangeText={(e) => setEmail(e)}
             ></TextInput>
+
             <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <Text style={styles.text}>Password</Text>
               <View style={{display:'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -210,7 +241,9 @@ export default function Login({ navigation }) {
               style={styles.textInput}
               onChangeText={(e) => setPasswordl(e)}
             ></TextInput>
+
           </KeyboardAvoidingView>
+
           <TouchableOpacity
             style={styles.buttonLogin}
             onPress={handleLoginButton}
@@ -223,7 +256,8 @@ export default function Login({ navigation }) {
           >
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
-        </View>
+          <View style={{marginBottom: 40}}/>
+        </ScrollView>
       )}
     </>
   );
@@ -231,7 +265,7 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: "midnightblue",
     alignItems: "center",
     paddingTop: 50,
