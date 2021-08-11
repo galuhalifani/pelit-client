@@ -1,6 +1,6 @@
 # PELIT FINANCE
 
-![Pelit](https://user-images.githubusercontent.com/81514521/129081989-ff6c5688-ed67-48a4-83e4-567e673ae423.jpg)
+![Pelit2](https://user-images.githubusercontent.com/81514521/129082767-2324d7c9-c0c1-46b8-8015-b8e7c178ca02.jpg)
 
 A mobile app with OCR to track your personal finance on monthly/daily basis. 
 
