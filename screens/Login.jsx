@@ -186,11 +186,13 @@ export default function Login({ navigation }) {
   }
 
   useEffect(() => {
+    let isMounted = true;
     if (isLogin) {
-      console.log('NAVIGATE KE HOME')
+      console.log('NAVIGATE KE HOME DARI LOGIN')
       getUserId();
       navigation.navigate("Home")
     }
+    return () => { isMounted = false };
   }, [isLogin, errorLogin]);
 
   function handleRegisterButton() {

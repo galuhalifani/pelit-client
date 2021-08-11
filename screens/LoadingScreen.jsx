@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 import {StyleSheet, View, Text} from 'react-native'
 import LottieView from 'lottie-react-native';
 
-export default function LoadingScreen({message}){
+export default function LoadingScreen({navigation, message}){
     let animation = React.createRef();
 
     useEffect(() => {

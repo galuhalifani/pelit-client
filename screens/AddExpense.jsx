@@ -105,7 +105,7 @@ export default function AddExpense({ navigation, route }) {
     // console.log(route.params)
   }, []);
 
-  const image = route.params.image;
+  // const image = route.params.image;
   // console.log(image, 'PHOTO ADD EXPENSE');
   // console.log(receiptImage, 'RECEIPT IMAGE')
 

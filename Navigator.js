@@ -43,6 +43,7 @@ export default function Navigator() {
   LogBox.ignoreLogs(['Reanimated 2']);
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.isLogin);
+  const errorLogin = useSelector((state) => state.errorLogin);
   const user = useSelector((state) => state.user);
   const allTransaction = useSelector((state) => state.allTransaction);
   const transByDate = useSelector((state) => state.transByDate);
@@ -59,7 +60,7 @@ export default function Navigator() {
   async function logout(navigation) {
     await AsyncStorage.removeItem("@dataUser");
     const dataUserAsync = await AsyncStorage.getItem("@dataUser");
-    console.log(dataUserAsync, 'DATA USER ASYNC NIH')
+    // console.log(dataUserAsync, 'DATA USER ASYNC NIH')
     // Reactotron.log(dataUserAsync, 'ASYNC STORAGE NAVIGATOR LOGOUT')
     await dispatch(setIsLogin(false));
     // Reactotron.log(isLogin, 'ISLOGIN LOGOUT')
@@ -97,7 +98,7 @@ export default function Navigator() {
       :
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName={dataUser ? "Home": "Login"}
+          initialRouteName={dataUser || isLogin ? "Home": "Login"}
           // initialRouteName="Loading"
           screenOptions={({ navigation }) => ({
             headerStyle: {
