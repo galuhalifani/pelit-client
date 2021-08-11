@@ -1,7 +1,42 @@
-# PELIT APP
+# PELIT FINANCE
 
-Mobile app for your expenses
+A mobile app with OCR to track your personal finance on monthly/daily basis. 
 
-To see demo, visit EXPO at https://expo.dev/@galuhalifani/pelit-finance
+- View, add, edit, and delete daily spending / income records
+- View periodic income & expense summary, broken down by category
+- See month-on-month charts & analytics
+- Set monthly target
+- Scan receipts
+- Earn achievement badges 
 
-```(Android-friendly. Works functionally for iOS with some minor display components not properly rendered)```
+### DEMO
+**To Run App, Visit this [Expo Site](https://expo.dev/@galuhalifani/pelit-finance)**
+
+>- To demo app with pre-filled dummy data, login with test user login credentials: email: testuser@pelit.com,  password: pelit123
+
+_*note: App is built for Android. Some UI elements might not be user-friendly in iOS, but still functional_
+
+### Development Scope
+**Scope**: Full-Stack
+
+**Related Repos**:
+
+- Pelit Server (Backend): https://github.com/galuhalifani/pelit-server 
+- Pelit Server (Backend-OCR): https://github.com/galuhalifani/pelit-ocr
+
+### Tech Stacks
+**Frontend**
+
+```React Native (Expo)```
+```React Bootstrap```
+```React Redux```
+```React Native Paper```
+
+**Backend**
+
+```Node JS```
+```Express```
+```Sequelize (PostgreSQL)```
+```Tesseract```
+```Heroku```
+```AWS EC2```
