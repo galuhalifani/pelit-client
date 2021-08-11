@@ -13,9 +13,9 @@ A mobile app with OCR to track your personal finance on monthly/daily basis.
 
 ### DEMO
 **To Run App, Visit this [Expo Site](https://expo.dev/@galuhalifani/pelit-finance)**
-_*If you try to open the demo and receive 'EXNetwork Error 403', contact me to manually request for permission_
 
 >- To demo app with pre-filled dummy data, login with test user login credentials: email: testuser@pelit.com,  password: pelit123
+>- _*If you try to open the demo and receive 'EXNetwork Error 403', contact me to manually request for permission_
 
 _*note: App is built for Android. Some UI elements might not be user-friendly in iOS, but still functional_
 
